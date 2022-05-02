@@ -1,11 +1,10 @@
 #include <iostream>
-#include <sstream>
 
 using namespace std;
 
 // Constante que define a largura e altura do tabuleiro
 // podendo possuir qualquer número inteiro positivo
-const int SIZE = 3;
+const int SIZE = 1;
 
 // Função que checa todas as posibilidades de vitória
 // de acordo com qual jogador fez a última jogada
@@ -222,7 +221,8 @@ int main() {
     system("cls");
 
     // Mostra o placar no final do programa
-    cout << "Placar\n-------------\nVitorias X: " << xWins << "\nVitorias O: " << oWins << "\nEmpates: " << draws;
+    cout << "Placar\n-------------\nVitorias X: " << xWins << "\nVitorias O: "
+    << oWins << "\nEmpates: " << draws << "\n-------------\n";
 
     system("pause");
 

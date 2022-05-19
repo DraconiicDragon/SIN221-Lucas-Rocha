@@ -1,16 +1,18 @@
 #include <iostream>
-
-using namespace std;
+#include <time.h>
+// autor: Lucas Rocha Ferreira
 
 // Constante que define a largura e altura do tabuleiro
 // podendo possuir qualquer número inteiro positivo
-const int SIZE = 1;
+#define SIZE 3
+
+using namespace std;
 
 // Função que checa todas as posibilidades de vitória
 // de acordo com qual jogador fez a última jogada
 bool checkBoard(string board[], string player) {
     
-    int inARoll;  // Inteiro para verificar quantos espaços em sequência um jogador possui  
+    int inARoll;  // Inteiro para verificar quantos espaços marcados em sequência um jogador possui  
     int cont = 0; // Contador utilizado para várias tarefas
 
     // Verifica todas as possibilidades na horizontal 
@@ -65,7 +67,7 @@ bool checkBoard(string board[], string player) {
         if(inARoll == SIZE) {
             return true;
         }
-        cont += SIZE-1;
+        cont += SIZE - 1;
     }
     return false;
 }
@@ -73,7 +75,7 @@ bool checkBoard(string board[], string player) {
 // Função para desenhar as linhas compostas de "---"
 void drawLine() {
     cout << "    ";
-    for(int j = 0; j < SIZE*4+1; j++) {
+    for(int j = 0; j < SIZE * 4+1; j++) {
         cout << "-";
     }
 }
@@ -82,18 +84,18 @@ void drawLine() {
 void drawBoard(string board[]) {
     int cont = 0;
     cout << "  +   ";
-    for(int i = 0; i < SIZE; i++) {
+    for(int i = 0; i < SIZE ; i++) {
         cout << i+1 << "   ";
     }
     cout << "\n";
-    for(int i = 0; i < SIZE; i++) {
+    for(int i = 0; i < SIZE ; i++) {
         drawLine();
         cout << "\n ";
         if(cont < 10) {
             cout << " ";
         }
         cout << cont << " ";
-        for(int j = 0; j < SIZE; j++) {
+        for(int j = 0; j < SIZE ; j++) {
             cout << "| " << board[cont] << " ";
             cont++;
         }
@@ -104,9 +106,9 @@ void drawBoard(string board[]) {
 }
 
 // Função onde ocorre todas as partidas
-string game() {
-    string board[SIZE*SIZE]; // Vetor para armazenar as jogadas 
-    string player = "X";     // Variável para definir de qual jogador é a vez
+string game(bool ai) {
+    string board[SIZE * SIZE]; // Vetor para armazenar as jogadas 
+    string player = "X";       // Variável para definir de qual jogador é a vez
 
     bool turn = true;    // Variável para alternar os turnos
     bool winner = false; // Variável para checar se houve um vencedor na partida
@@ -114,20 +116,26 @@ string game() {
     int option;    // Variável para armazenar a posição que o jogador deseja marcar
     int turns = 0; // Variável para contar a quantidade de turnos passados
 
+    srand(time(NULL));
+
     // FOR para preencher o vetor com espaços vazios
-    for(int i = 0; i < SIZE*SIZE; i++) {   
+    for(int i = 0; i < SIZE * SIZE; i++) {   
         board[i] = " ";
     }
 
     // Loop principal do jogo
-    while(turns < SIZE*SIZE) {
-
-        drawBoard(board);
+    while(turns < SIZE * SIZE) {
 
         // Lê qual a posição que o jogador deseja marcar
-        cout << "Vez do jogador " << player << " (1 a "<< SIZE*SIZE << ")\n";
-        cin >> option;       
-        option--;
+        if(!ai || (ai && turn)) {
+            drawBoard(board);
+            cout << "Vez do jogador " << player << " (1 a "<< SIZE*SIZE << ")\n";
+            cin >> option;       
+            option--;
+        } else {
+            option = rand() % (SIZE * SIZE);
+        }
+        
 
         // Checa se a posição que o jogador deseja marcar está disponivel
         if(board[option] == " ") {
@@ -140,18 +148,16 @@ string game() {
 
             // IF para checar se já se passaram o mínimo de turnos necessários para uma vitória
             if(turns > SIZE * 2 - 2) {
-
                 // Caso sim, chama a função "checkBoard()" para checar se há um vencedor
-                // Caso a função retorne TRUE, a variável "winner" é atualizada para TRUE e o loop é quebrado     
+                // Caso a função retorne TRUE, a variável "winner" é atualizada para TRUE
+                // e o loop é quebrado     
                 if(checkBoard(board, player)) {
-                   
                     system("cls");
                     winner = true;
                     break;
-
                 }
 
-            }
+            }            
 
             // Faz a troca da vez do jogador X para o jogador O e vice-versa
             if(turn) {
@@ -159,24 +165,24 @@ string game() {
                 turn = false;
             } else {
                 player = "X";
-                turn = true;             
+                turn = true;
             }
-           
+
             system("cls");
 
         }
 
         // Caso não, é exibida uma mensagem que informa o jogador do erro ocorrido e o turno não é contado
-        else {
+        else if(!ai || (ai && turn)) {
             system("cls");
-            cout << "Jogada Invalida!\n";
+            cout << "Jogada Invalida!\n";              
         }   
     }
 
     drawBoard(board);
 
     // Caso a variável "winner" for atualizada para TRUE durante o loop principal
-    // quer dizer que um dos jogadores ganhou e já que o BREAK ocorre antes da troca dos jogadores ser realizada
+    // quer dizer que um dos jogadores ganhou e já que o BREAK ocorre antes da troca dos
     // o último a fazer a jogada é o vencedor
     if(winner) {
         cout << "Vitoria do Jogador " << player;
@@ -192,39 +198,63 @@ string game() {
 
 int main() {
 
-    // Variáveis para contar o placar de vitórias e empates
-    int xWins = 0, oWins = 0, draws = 0;
+    int xWins = 0, // Variável para contar o número de vitórias do jogador X
+    oWins = 0,     // Variável para contar o número de vitórias do jogador O
+    draws = 0;     // Variável para contar o número de empates
 
-    // Variável para receber o ganhador da ultima partida
-    string winner;
-
-    // WHILE que repete enquanto o usuário digitar "s" no final de cada partida
+    string winner; // Variável para receber o ganhador da ultima partida
+    int opcao;     // Variável para receber a escolha do usuário no menu
+    bool ai;       // Variável para definir se as jogadas do jogador O serão executadas por uma maquina ou uma pessoa
+    
+    // WHILE que controla o menu principal
     while(true) {
 
-        winner = game();
+        // Menu principal
+        cout << "--------- Menu ---------\n"
+             << " 1 Jogador x Jogador\n"
+             << " 2 Jogador x Computador\n"
+             << " 3 Sair\n"
+             << "------------------------\n";
+        cin >> opcao;
+        system("cls");
 
-        if(winner == "X") {
-            xWins++;
-        } else if(winner == "O") {
-            oWins++;
-        } else {
-            draws++;
-        }
-
-        cout << "\nJogar Novamente? (s/n)\n";
-        cin >> winner;
-        if(winner != "s") {
+        // Define se uma "IA" vai controlar ou não o jogador O
+        // TRUE para sim, FALSE para não
+        if(opcao == 1) {
+            ai = false;
+        } else if(opcao == 2) {
+            ai = true;
+        } else{
             break;
         }
+
+        // WHILE que repete enquanto o usuário digitar "s" no final de cada partida
+        while(true) {
+            winner = game(ai);
+
+            if(winner == "X") {
+                xWins++;
+            } else if(winner == "O") {
+                oWins++;
+            } else {
+                draws++;
+            }
+
+            cout << "\nJogar Novamente? (s/n)\n";
+            cin >> winner;
+            if(winner != "s") {
+                break;
+            }
+            system("cls");
+        }
+        system("cls");
+
+        // Mostra o placar no final do jogo
+        cout << "---- Placar ----\n Vitorias X: " << xWins << "\n Vitorias O: "
+        << oWins << "\n Empates: " << draws << "\n----------------\n";
+
+        system("pause");
         system("cls");
     }
-    system("cls");
-
-    // Mostra o placar no final do programa
-    cout << "Placar\n-------------\nVitorias X: " << xWins << "\nVitorias O: "
-    << oWins << "\nEmpates: " << draws << "\n-------------\n";
-
-    system("pause");
-
     return 0;
 }

@@ -105,6 +105,23 @@ void drawBoard(string board[]) {
     cout << "\n";
 }
 
+int verificar_inteiro() {
+    int num; // Recebe o valor a ser lido
+
+    // Enquanto 'num' não for um inteiro o loop repete
+    while (scanf("%d", &num) != 1) {
+
+        // Passando um vetor estatico de tamanho 256
+        static char temp[256];
+        // fgets-Lendo a string
+        // sizeof-Fornece o tamanho do vetor temp
+        // stdin-Dispositivo de entrada padrão
+        fgets(temp, sizeof(temp), stdin);
+        cout << "Digite um numero: ";
+    }
+    return num;
+}
+
 // Função onde ocorre todas as partidas
 string game(bool ai) {
     string board[SIZE * SIZE]; // Vetor para armazenar as jogadas 
@@ -130,7 +147,7 @@ string game(bool ai) {
         if(!ai || (ai && turn)) {
             drawBoard(board);
             cout << "Vez do jogador " << player << " (1 a "<< SIZE*SIZE << ")\n";
-            cin >> option;       
+            option = verificar_inteiro();   
             option--;
         } else {
             option = rand() % (SIZE * SIZE);

@@ -1,5 +1,6 @@
 #ifndef LISTA_H
 #define LISTA_H
+#include "TAD.cpp"
 
 typedef struct Item;
 

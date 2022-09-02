@@ -1,11 +1,14 @@
 #include <iostream>
-#include "TAD.hpp"
 
 using namespace std;
 
 typedef struct Item{
     int id;
     string nome;
+    string telefone;
+    string celular;
+    string email;
+    int idade;
 };
 
 typedef struct Elemento* Apontador;
@@ -23,18 +26,11 @@ typedef struct Lista{
 
 void CriaListaVazia(Lista *lista)
 {
-    if (!listaCriada)
-    {
-        lista->primeiro = new Elemento;
-        lista->ultimo = lista->primeiro;
-        lista->ultimo->prox = NULL;
-        cout << "Lista criada com sucesso!";
-        listaCriada = true;
-    }
-    else
-    {
-        cout << "Lista já existe!";
-    }
+    lista->primeiro = new Elemento;
+    lista->ultimo = lista->primeiro;
+    lista->ultimo->prox = NULL;
+    cout << "Lista criada com sucesso!";
+    cout << "Lista já existe!";
 }
 
 bool VerificaListaVazia(Lista *lista)
